@@ -1,4 +1,12 @@
-import { EventMessage, AggregateRoot, Command } from './types'
+import {
+  EventMessage,
+  AggregateRoot,
+  EventNames,
+  OrderCreatedEvent,
+  OrderFinishedEvent,
+  AddItemsToOrderEvent,
+  RemoveItemsFromOrderEvent
+} from './types'
 import cuid, { isCuid } from 'cuid'
 
 export class Order implements AggregateRoot {
@@ -17,10 +25,10 @@ export class Order implements AggregateRoot {
     this.applyAddItemsEvent = this.applyAddItemsEvent.bind(this)
     this.applyRemoveItemsEvent = this.applyRemoveItemsEvent.bind(this)
 
-    this.register('ORDER_CREATED', this.applyCreatedEvent)
-    this.register('ORDER_FINISHED', this.applyFinishedEvent)
-    this.register('ORDER_ADD_ITEMS', this.applyAddItemsEvent)
-    this.register('ORDER_REMOVE_ITEMS', this.applyRemoveItemsEvent)
+    this.register(EventNames.ORDER_CREATED, e => this.applyCreatedEvent(e as OrderCreatedEvent))
+    this.register(EventNames.ORDER_FINISHED, e => this.applyFinishedEvent(e as OrderFinishedEvent) )
+    this.register(EventNames.ORDER_ADD_ITEMS, e => this.applyAddItemsEvent(e as AddItemsToOrderEvent))
+    this.register(EventNames.ORDER_REMOVE_ITEMS, e => this.applyRemoveItemsEvent(e as RemoveItemsFromOrderEvent))
   }
 
   apply(event: EventMessage) {
@@ -67,44 +75,44 @@ export class Order implements AggregateRoot {
     this.apply(makeFinishEvent(this.id, this.version + 1))
   }
 
-  private applyCreatedEvent(event: EventMessage) {
+  private applyCreatedEvent(event: OrderCreatedEvent) {
     this.id = event.id
   }
 
-  private applyFinishedEvent(event: EventMessage) {
+  private applyFinishedEvent(event: OrderFinishedEvent) {
     this.finished = true
   }
 
-  private applyAddItemsEvent(event: EventMessage) {
+  private applyAddItemsEvent(event: AddItemsToOrderEvent) {
     this.items += event.payload.items.length
   }
 
-  private applyRemoveItemsEvent(event: EventMessage) {
+  private applyRemoveItemsEvent(event: RemoveItemsFromOrderEvent) {
     this.items -= event.payload.items.length
   }
 }
 
-function makeCreateEventMessage (id: string, index: number): EventMessage {
+function makeCreateEventMessage (id: string, index: number): OrderCreatedEvent {
   return {
-    name: 'ORDER_CREATED',
+    name: EventNames.ORDER_CREATED,
     id,
     index,
     payload: {}
   }
 }
 
-function makeFinishEvent (id: string, index: number): EventMessage {
+function makeFinishEvent (id: string, index: number): OrderFinishedEvent {
   return {
-    name: 'ORDER_FINISHED',
+    name: EventNames.ORDER_FINISHED,
     id,
     index,
     payload: {}
   }
 }
 
-function makeAddItems (id: string, index: number, items: []): EventMessage {
+function makeAddItems (id: string, index: number, items: []): AddItemsToOrderEvent {
   return {
-    name: 'ORDER_ADD_ITEMS',
+    name: EventNames.ORDER_ADD_ITEMS,
     id,
     index,
     payload: {
@@ -113,9 +121,9 @@ function makeAddItems (id: string, index: number, items: []): EventMessage {
   }
 }
 
-function makeRemoveItems (id: string, index: number, items: []): EventMessage {
+function makeRemoveItems (id: string, index: number, items: []): RemoveItemsFromOrderEvent {
   return {
-    name: 'ORDER_REMOVE_ITEMS',
+    name: EventNames.ORDER_REMOVE_ITEMS,
     id,
     index,
     payload: {

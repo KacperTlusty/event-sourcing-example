@@ -10,7 +10,9 @@ env.config()
 const command1: Command = {
   id: '',
   name: 'CreateOrder',
-  payload: {}
+  payload: {},
+  created: new Date(),
+  accepted: new Date()
 }
 
 makeHandlers().then(async (handler) => {
