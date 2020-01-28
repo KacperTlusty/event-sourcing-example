@@ -1,8 +1,8 @@
 import { Order } from "./model"
-import { Command } from "./types"
+import { Command, AddItemsToOrder, RemoveItemsFromOrder, CommandNames, FinishOrder, CreateOrder } from "./types"
 import { OrderRepository } from "./repository"
 
-async function createOrder (repository: OrderRepository, command: Command): Promise<void> {
+async function createOrder (repository: OrderRepository, command: CreateOrder): Promise<void> {
   if (await repository.getById(command.id)) {
     throw new Error('Order already exists.')
   }
@@ -11,7 +11,7 @@ async function createOrder (repository: OrderRepository, command: Command): Prom
   await repository.saveEvents(order)
 }
 
-async function finishOrder (repository: OrderRepository, command: Command): Promise<void> {
+async function finishOrder (repository: OrderRepository, command: FinishOrder): Promise<void> {
   const order = await repository.getById(command.id)
   if (!order) {
     throw new Error('Order does not exists')
@@ -20,7 +20,7 @@ async function finishOrder (repository: OrderRepository, command: Command): Prom
   await repository.saveEvents(order)
 }
 
-async function addItems (repository: OrderRepository, command: Command): Promise<void> {
+async function addItems (repository: OrderRepository, command: AddItemsToOrder): Promise<void> {
   const order = await repository.getById(command.id)
   if (!order) {
     throw new Error('Order does not exist')
@@ -29,7 +29,7 @@ async function addItems (repository: OrderRepository, command: Command): Promise
   await repository.saveEvents(order)
 }
 
-async function removeItems (repository: OrderRepository, command: Command): Promise<void> {
+async function removeItems (repository: OrderRepository, command: RemoveItemsFromOrder): Promise<void> {
   const order = await repository.getById(command.id)
   if (!order) {
     throw new Error('Order does not exists')
@@ -46,10 +46,10 @@ export async function makeHandlers () {
   const commandHandlers: {
     [key: string]: (command: Command) => void | Promise<void>
   } = {
-    'CreateOrder': (command) => createOrder(repository, command),
-    'FinishOrder': (command) => finishOrder(repository, command),
-    'AddItemsToOrder': (command) => addItems(repository, command),
-    'RemoveItemsFromOrder': (command) => removeItems(repository, command)
+    [CommandNames.CreateOrder]: (command) => createOrder(repository, command as CreateOrder),
+    [CommandNames.FinishOrder]: (command) => finishOrder(repository, command as FinishOrder),
+    [CommandNames.AddItemsToOrder]: (command) => addItems(repository, command as AddItemsToOrder),
+    [CommandNames.RemoveItemsFromOrder]: (command) => removeItems(repository, command as RemoveItemsFromOrder)
   }
 
   return async function handleCommand(command: Command): Promise<void> {
