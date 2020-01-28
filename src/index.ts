@@ -14,32 +14,32 @@ const command1: Command = {
 }
 
 makeHandlers().then(async (handler) => {
-  const id = cuid()
-  command1.id = id
-  await handler(command1)
-  console.log(getAggregates())
-  await handler({
-    id,
-    name: 'AddItemsToOrder',
-    payload: {
-      items: ['1', '2', '3']
-    }
-  })
-  console.log(getAggregates())
-  await handler({
-    id,
-    name: 'RemoveItemsFromOrder',
-    payload: {
-      items: ['1', '2']
-    }
-  })
-  console.log(getAggregates())
-  await handler({
-    id,
-    name: 'FinishOrder',
-    payload: {}
-  })
-  console.log(getAggregates())
+  // const id = cuid()
+  // command1.id = id
+  // await handler(command1)
+  // console.log(getAggregates())
+  // await handler({
+  //   id,
+  //   name: 'AddItemsToOrder',
+  //   payload: {
+  //     items: ['1', '2', '3']
+  //   }
+  // })
+  // console.log(getAggregates())
+  // await handler({
+  //   id,
+  //   name: 'RemoveItemsFromOrder',
+  //   payload: {
+  //     items: ['1', '2']
+  //   }
+  // })
+  // console.log(getAggregates())
+  // await handler({
+  //   id,
+  //   name: 'FinishOrder',
+  //   payload: {}
+  // })
+  // console.log(getAggregates())
 }).catch(error => {
   console.error(error)
 })

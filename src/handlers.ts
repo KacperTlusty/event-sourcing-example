@@ -24,7 +24,7 @@ const finishOrder: (repository: OrderRepository, command: Command) => Promise<vo
 const addItems: (repository: OrderRepository, command: Command) => Promise<void> = async (repository, command) => {
   const order = await repository.getById(command.id)
   if (!order) {
-    throw new Error('Order does not exists')
+    throw new Error('Order does not exist')
   }
   order.addItems(command.payload.items)
   await repository.saveEvents(order)
@@ -43,6 +43,7 @@ const removeItems: (repository: OrderRepository, command: Command) => Promise<vo
 export async function makeHandlers () {
   const repository = new OrderRepository()
   await repository.connect()
+  await repository.loadEvents()
   const commandHandlers: {
     [key: string]: (command: Command) => void | Promise<void>
   } = {

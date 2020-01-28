@@ -10,7 +10,6 @@ export class Order implements AggregateRoot {
   static readonly AGGREGATE_NAME = 'ORDER'
 
   eventHandlers: { [key: string]: (event: EventMessage) => void } = {}
-  commandHandlers: { [key: string]: (command: Command) => void } = {}
   constructor() {
     this.apply = this.apply.bind(this)
     this.register = this.register.bind(this)
