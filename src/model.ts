@@ -12,9 +12,6 @@ export class Order implements AggregateRoot {
   eventHandlers: { [key: string]: (event: EventMessage) => void } = {}
   constructor() {
     this.apply = this.apply.bind(this)
-    this.register = this.register.bind(this)
-    this.addItems = this.addItems.bind(this)
-    this.removeItems = this.removeItems.bind(this)
     this.applyCreatedEvent = this.applyCreatedEvent.bind(this)
     this.applyFinishedEvent = this.applyFinishedEvent.bind(this)
     this.applyAddItemsEvent = this.applyAddItemsEvent.bind(this)
